@@ -16,7 +16,7 @@ interface NodeInfoPanelProps {
   onClose?: () => void; // To close or hide the panel
 }
 
-const NodeInfoPanel: React.FC<NodeInfoPanelProps> = ({
+const NodeInfoPanelComponent: React.FC<NodeInfoPanelProps> = ({
   selectedNode,
   isLoading,
   error,
@@ -66,4 +66,4 @@ const NodeInfoPanel: React.FC<NodeInfoPanelProps> = ({
   );
 };
 
-export default NodeInfoPanel;
+export default React.memo(NodeInfoPanelComponent);
