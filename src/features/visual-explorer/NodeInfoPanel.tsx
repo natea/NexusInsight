@@ -39,7 +39,7 @@ const NodeInfoPanel: React.FC<NodeInfoPanelProps> = ({
   }
 
   return (
-    <aside className="node-info-panel active">
+    <aside className="node-info-panel active" role="complementary" aria-label="Node details">
       {onClose && (
         <button onClick={onClose} className="close-button" aria-label="Close node details">
           &times;

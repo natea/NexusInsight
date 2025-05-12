@@ -3,65 +3,20 @@ import SearchInput from '../features/search/SearchInput';
 import SearchResultsDisplay from '../features/search/SearchResultsDisplay';
 import ItemDetailView from '../features/search/ItemDetailView';
 
-// Type definitions aligned with the refined specification (docs/specs/refined/IntelligentSearchAndComprehensiveItemDisplay_refined_overview.md)
-
-export interface SearchResultItem {
-  qid: string; // QID, changed from id for clarity
-  label: string; // Label, changed from title for clarity
+// Placeholder types - align with actual data structures
+interface SearchResultItem {
+  id: string;
+  title: string;
   description?: string;
-  thumbnail_url?: string; // As per spec example
 }
 
-export interface LanguageInfo {
-  label_lang: string;
-  description_lang: string;
-}
-
-export interface ImageInfo {
-  url: string;
-  alt_text_default?: string; // As per spec example
-}
-
-// Represents the value of a statement, which can be a literal or another item.
-export interface StatementValue {
-  value_qid?: string; // QID if the value is an item
-  value_label?: string; // Label if the value is an item
-  value_string?: string; // If the value is a string literal
-  value_time?: string; // If the value is a time literal
-  value_is_item: boolean; // Discriminator
-  // Add other literal types as needed (e.g., value_coordinate, value_quantity)
-}
-
-// Represents a key fact, simplified for prominent display.
-export interface KeyFact extends StatementValue {
-  property_pid: string;
-  property_label?: string; // Made optional to align with component's fallback logic
-}
-
-// Represents a qualifier, which is a property-value pair that refines a statement.
-export interface Qualifier extends StatementValue {
-  property_pid: string;
-  property_label?: string; // Made optional
-}
-
-// Represents a full statement, including qualifiers.
-export interface Statement extends KeyFact {
-  qualifiers?: Qualifier[];
-}
-
-export interface ItemData {
-  qid: string; // Changed from id
-  label: string; // Changed from title
+interface ItemData {
+  id: string;
+  title: string;
   description: string;
-  aliases?: string[];
-  language_info?: LanguageInfo; // Added as per spec
-  image_info?: ImageInfo; // Added as per spec, replacing imageUrl
-  wikidata_url?: string; // Changed from wikidataUrl for consistency
-  key_facts?: KeyFact[]; // Added as per spec
-  statements?: Record<string, Statement[]>; // Grouped by PID, as per spec
-  // Removed properties and connections, replaced by key_facts and statements
+  properties?: Record<string, any>;
+  connections?: Array<{ id: string; type: string; targetTitle: string }>;
 }
-
 
 const SearchPage: React.FC = () => {
   const [searchResults, setSearchResults] = useState<SearchResultItem[]>([]);
@@ -83,13 +38,19 @@ const SearchPage: React.FC = () => {
     setSelectedItemId(null); // Clear previous selection
     setCurrentItemData(null); // Clear previous item data
     console.log('Searching for:', query);
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000));
     try {
-      const response = await fetch(`/api/v1/search?q=${encodeURIComponent(query)}`); // Changed 'query' to 'q'
-      if (!response.ok) {
-        throw new Error(`Search API error: ${response.statusText}`);
+      // Replace with actual API call to your search service
+      if (query.toLowerCase().includes('error')) {
+        throw new Error('Simulated search API error');
       }
-      const data: { results: SearchResultItem[] } = await response.json(); // Expect an object with a 'results' property
-      setSearchResults(data.results); // Access the 'results' array
+      const mockResults: SearchResultItem[] = [
+        { id: 'item1', title: `Result 1 for "${query}"`, description: 'Description for item 1' },
+        { id: 'item2', title: `Result 2 for "${query}"`, description: 'Description for item 2' },
+        { id: 'item3', title: `Result 3 for "${query}"` },
+      ];
+      setSearchResults(mockResults);
     } catch (err) {
       setSearchError(err instanceof Error ? err.message : 'An unknown error occurred during search.');
       setSearchResults([]);
@@ -103,13 +64,28 @@ const SearchPage: React.FC = () => {
     setIsLoadingItem(true);
     setItemError(null);
     console.log('Fetching details for item:', itemId);
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 700));
     try {
-      const response = await fetch(`/api/v1/item/${itemId}`);
-      if (!response.ok) {
-        throw new Error(`Item fetch API error: ${response.statusText}`);
+      // Replace with actual API call to fetch item details
+      if (itemId === 'item-error') {
+        throw new Error('Simulated item fetch error');
       }
-      const data: ItemData = await response.json();
-      setCurrentItemData(data);
+      const mockItemData: ItemData = {
+        id: itemId,
+        title: `Details for Item ${itemId}`,
+        description: `This is a detailed description for item ${itemId}. It contains various attributes and connections.`,
+        properties: {
+          'Created Date': '2024-01-15',
+          'Category': 'Sample Data',
+          'Status': 'Active',
+        },
+        connections: [
+          { id: 'conn1', type: 'related_to', targetTitle: 'Another Item A' },
+          { id: 'conn2', type: 'depends_on', targetTitle: 'Core Component B' },
+        ],
+      };
+      setCurrentItemData(mockItemData);
     } catch (err) {
       setItemError(err instanceof Error ? err.message : 'An unknown error occurred while fetching item details.');
       setCurrentItemData(null);
