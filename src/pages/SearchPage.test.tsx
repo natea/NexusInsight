@@ -96,7 +96,7 @@ describe('SearchPage Integration Tests', () => {
     await waitFor(() => {
       expect(screen.queryByText(/loading item details.../i)).not.toBeInTheDocument();
       // Check for elements from ItemDetailView based on updated mock data for Q64
-      expect(screen.getByText((content, element) => element?.tagName.toLowerCase() === 'h2' && content.startsWith('Berlin (Q64)'))).toBeInTheDocument(); // Item Label and QID
+      expect(screen.getByRole('heading', { name: /Berlin \(Q64\)/i, level: 2 })).toBeInTheDocument(); // Item Label and QID
       expect(screen.getByText('Capital and largest city of Germany')).toBeInTheDocument(); // Item Description
       
       // Check for Key Facts
@@ -104,11 +104,13 @@ describe('SearchPage Integration Tests', () => {
       expect(screen.getByText((content, element) => element?.tagName.toLowerCase() === 'strong' && content.includes('instance of (P31)'))).toBeInTheDocument();
       expect(screen.getByText('capital city')).toBeInTheDocument(); // Value for 'instance of'
       expect(screen.getByText((content, element) => element?.tagName.toLowerCase() === 'strong' && content.includes('country (P17)'))).toBeInTheDocument();
-      expect(screen.getByText('Germany')).toBeInTheDocument(); // Value for 'country'
+      // Ensure 'Germany' as the value for 'country' is specifically found within its key fact list item
+      const countryFactLi = screen.getByText((content, element) => element?.tagName.toLowerCase() === 'strong' && content.includes('country (P17)')).closest('li');
+      expect(countryFactLi).toHaveTextContent('Germany');
 
       // Check for Statements
       expect(screen.getByText('All Statements')).toBeInTheDocument();
-      expect(screen.getByText((content, element) => element?.tagName.toLowerCase() === 'h4' && content.includes('capital of (P36)'))).toBeInTheDocument();
+      expect(screen.getByText((content, element) => element?.tagName.toLowerCase() === 'h3' && content.includes('capital of (P36)'))).toBeInTheDocument();
       expect(screen.getAllByText('Germany').length).toBeGreaterThanOrEqual(1); // Germany appears as value for 'capital of' and 'country'
 
       // Check for image (alt text)

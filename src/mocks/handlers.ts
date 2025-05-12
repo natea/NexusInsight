@@ -120,6 +120,55 @@ export const handlers = [
         }
       });
     }
+if (qid === 'Q76') { // Barack Obama
+      return HttpResponse.json({
+        qid: 'Q76',
+        label: 'Barack Obama',
+        description: '44th U.S. President',
+        aliases: ['Obama', 'Barack Hussein Obama II'],
+        language_info: {
+          label_lang: lang,
+          description_lang: lang,
+        },
+        image_info: {
+          url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Barack_Obama_presidential_portrait.jpg/800px-Barack_Obama_presidential_portrait.jpg',
+          alt_text_default: 'Official presidential portrait of Barack Obama',
+        },
+        wikidata_url: 'https://www.wikidata.org/wiki/Q76',
+        key_facts: [
+          { property_pid: 'P31', property_label: 'instance of', value_qid: 'Q5', value_label: 'human', value_is_item: true },
+          { property_pid: 'P27', property_label: 'country of citizenship', value_qid: 'Q30', value_label: 'United States of America', value_is_item: true },
+          { property_pid: 'P569', property_label: 'date of birth', value_string: 'August 4, 1961', value_is_item: false },
+        ],
+        statements: {
+          'P26': [ 
+            {
+              property_pid: 'P26',
+              property_label: 'spouse',
+              value_qid: 'Q13133',
+              value_label: 'Michelle Obama',
+              value_is_item: true,
+              qualifiers: [
+                {
+                  property_pid: 'P580',
+                  property_label: 'start time',
+                  value_string: 'October 3, 1992', // Marriage date
+                  value_is_item: false
+                }
+              ]
+            }
+          ],
+          'P106': [ 
+            { property_pid: 'P106', property_label: 'occupation', value_qid: 'Q82955', value_label: 'politician', value_is_item: true, qualifiers: [] },
+            { property_pid: 'P106', property_label: 'occupation', value_qid: 'Q185351', value_label: 'lawyer', value_is_item: true, qualifiers: [] }
+          ],
+          'P69': [ 
+            { property_pid: 'P69', property_label: 'educated at', value_qid: 'Q49122', value_label: 'Harvard Law School', value_is_item: true, qualifiers: [] },
+            { property_pid: 'P69', property_label: 'educated at', value_qid: 'Q1328910', value_label: 'Columbia University', value_is_item: true, qualifiers: [] },
+          ]
+        }
+      });
+    }
     // Default item for any other QID
     return HttpResponse.json({
       qid: qid as string,

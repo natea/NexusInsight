@@ -1,24 +1,20 @@
-import React from 'react';
-import { ItemData, KeyFact, Statement, StatementValue } from '../../pages/SearchPage'; // Import types
+import React, { useState } from 'react';
+import { ItemData, KeyFact, StatementValue } from '../../pages/SearchPage'; // Import types
+import StatementsRelationshipsSection from './StatementsRelationshipsSection'; // Import the dedicated component
 
-// Helper to render statement values, which could be links or literals
-const renderStatementValue = (value: StatementValue) => {
+// Helper to render statement values for KeyFacts, can be moved to utils if shared more broadly
+const renderKeyFactValue = (value: StatementValue) => {
   if (value.value_is_item && value.value_qid && value.value_label) {
-    // In a real app, this could be a link to another item page:
-    // return <a href={`/item/${value.value_qid}`}>{value.value_label}</a>;
     return value.value_label;
   }
   if (value.value_string) {
     return value.value_string;
   }
   if (value.value_time) {
-    // Format time appropriately
     return new Date(value.value_time).toLocaleDateString();
   }
-  // Add rendering for other types like coordinates, quantities etc.
   return 'N/A';
 };
-
 
 interface ItemDetailViewProps {
   itemId: string | null; // This is the qid
@@ -35,6 +31,9 @@ const ItemDetailView: React.FC<ItemDetailViewProps> = ({
   error,
   onClose,
 }) => {
+  // expandedQualifiers and toggleQualifiers state and function are removed
+  // as this logic is now handled by StatementsRelationshipsSection.
+
   if (isLoading) {
     return <div>Loading item details...</div>;
   }
@@ -82,31 +81,18 @@ const ItemDetailView: React.FC<ItemDetailViewProps> = ({
           <ul>
             {itemData.key_facts.map((fact: KeyFact, index: number) => (
               <li key={`${fact.property_pid}-${index}`}>
-                <strong>{fact.property_label} (P{fact.property_pid}):</strong> {renderStatementValue(fact)}
+                <strong>{fact.property_label} ({fact.property_pid}):</strong> {renderKeyFactValue(fact)}
               </li>
             ))}
           </ul>
         </div>
       )}
 
-      {itemData.statements && Object.keys(itemData.statements).length > 0 && (
-        <div className="item-statements">
-          <h3>All Statements</h3>
-          {Object.entries(itemData.statements).map(([pid, statements]: [string, Statement[]]) => (
-            <div key={pid} className="statement-group">
-              <h4>{statements[0]?.property_label || `Property P${pid}`} (P{pid})</h4>
-              <ul>
-                {statements.map((statement: Statement, index: number) => (
-                  <li key={`${pid}-${statement.value_qid || statement.value_string || index}`}>
-                    {renderStatementValue(statement)}
-                    {/* TODO: Render qualifiers if needed */}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      )}
+      {/* Delegate rendering of statements and qualifiers to StatementsRelationshipsSection */}
+      <StatementsRelationshipsSection
+        title="All Statements"
+        statements={itemData.statements}
+      />
 
       {itemData.wikidata_url && (
         <div className="item-metadata-links">

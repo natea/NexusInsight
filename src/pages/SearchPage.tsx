@@ -35,12 +35,18 @@ export interface StatementValue {
 // Represents a key fact, simplified for prominent display.
 export interface KeyFact extends StatementValue {
   property_pid: string;
-  property_label: string;
+  property_label?: string; // Made optional to align with component's fallback logic
 }
 
-// Represents a full statement, including qualifiers (not fully typed here for brevity).
+// Represents a qualifier, which is a property-value pair that refines a statement.
+export interface Qualifier extends StatementValue {
+  property_pid: string;
+  property_label?: string; // Made optional
+}
+
+// Represents a full statement, including qualifiers.
 export interface Statement extends KeyFact {
-  qualifiers?: any[]; // Define more specific type for qualifiers if needed
+  qualifiers?: Qualifier[];
 }
 
 export interface ItemData {
